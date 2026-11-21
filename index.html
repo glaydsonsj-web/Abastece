@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0b1220">
+<title>Abastece | Gasolina ou Etanol?</title>
+<style>
+:root{color-scheme:dark;--bg:#0b1220;--card:#121d30;--muted:#9aabc2;--line:#26364e;--green:#36d399;--blue:#60a5fa}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(ellipse at top,#172b45 0%,var(--bg) 58%);font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;color:#f4f7fb;display:grid;place-items:center;padding:24px}
+main{width:min(100%,480px)}.brand{display:flex;align-items:center;gap:12px;margin-bottom:24px}.logo{width:46px;height:46px;border-radius:14px;background:var(--green);color:#06251b;display:grid;place-items:center;font-size:24px;font-weight:900}.brand strong{font-size:21px;letter-spacing:.2px}.brand span{display:block;color:var(--muted);font-size:13px;margin-top:2px}
+.card{background:rgba(18,29,48,.96);border:1px solid var(--line);border-radius:22px;padding:25px;box-shadow:0 22px 65px #0005}h1{font-size:25px;line-height:1.2;margin:0 0 8px} .intro{color:var(--muted);font-size:14px;line-height:1.5;margin:0 0 24px}
+label{display:block;font-size:13px;color:#c7d3e3;font-weight:650;margin:16px 0 8px}.input-wrap{position:relative}.currency{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--muted)}input{width:100%;border:1px solid var(--line);border-radius:12px;background:#0b1525;color:white;font-size:18px;padding:14px 14px 14px 48px;outline:none}input:focus{border-color:var(--green);box-shadow:0 0 0 3px #36d39920}.hint{color:var(--muted);font-size:12px;margin-top:7px}
+button{width:100%;border:0;border-radius:12px;padding:15px;background:var(--green);color:#06251b;font-size:16px;font-weight:800;margin-top:22px;cursor:pointer}button:active{transform:scale(.99)}
+.result{display:none;margin-top:20px;border:1px solid #2c745f;background:#102c2a;border-radius:15px;padding:18px}.result.show{display:block}.eyebrow{color:#9ddfc8;text-transform:uppercase;font-size:11px;font-weight:800;letter-spacing:1px}.winner{font-size:24px;font-weight:850;margin:5px 0}.detail{font-size:14px;color:#c4d9d1;line-height:1.5}.ratio{margin-top:13px;padding-top:13px;border-top:1px solid #285347;color:#b7cfc7;font-size:13px}.foot{color:var(--muted);font-size:12px;text-align:center;margin:18px 8px 0;line-height:1.5}
+</style>
+</head>
+<body>
+<main>
+ <div class="brand"><div class="logo">A</div><div><strong>Abastece</strong><span>Economia na hora de abastecer</span></div></div>
+ <section class="card">
+  <h1>Gasolina ou etanol?</h1>
+  <p class="intro">Informe os preços por litro e descubra qual combustível compensa mais para o seu bolso.</p>
+  <label for="gas">Preço da gasolina</label>
+  <div class="input-wrap"><span class="currency">R$</span><input id="gas" type="number" inputmode="decimal" min="0" step=".001" placeholder="Ex.: 6,19"></div>
+  <label for="eth">Preço do etanol</label>
+  <div class="input-wrap"><span class="currency">R$</span><input id="eth" type="number" inputmode="decimal" min="0" step=".001" placeholder="Ex.: 4,19"></div>
+  <p class="hint">A regra geral considera o etanol vantajoso quando custa até 70% do preço da gasolina.</p>
+  <button id="calc">Comparar combustíveis</button>
+  <div class="result" id="result" aria-live="polite">
+   <div class="eyebrow">Melhor custo-benefício</div><div class="winner" id="winner"></div><div class="detail" id="detail"></div><div class="ratio" id="ratio"></div>
+  </div>
+ </section>
+ <p class="foot">Cálculo pela regra dos 70%. O resultado pode variar conforme o consumo e o desempenho do seu veículo.</p>
+</main>
+<script>
+const gas=document.querySelector('#gas'),eth=document.querySelector('#eth'),result=document.querySelector('#result');
+const money=n=>n.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+document.querySelector('#calc').addEventListener('click',()=>{
+ const g=Number(gas.value.replace(',','.')),e=Number(eth.value.replace(',','.'));
+ if(!g||!e||g<=0||e<=0){alert('Informe os dois preços corretamente.');return}
+ const pct=e/g*100,limit=g*.7;
+ document.querySelector('#winner').textContent=e<=limit?'Etanol compensa!':'Gasolina compensa!';
+ document.querySelector('#detail').textContent=e<=limit
+  ?'O etanol está custando '+pct.toLocaleString('pt-BR',{maximumFractionDigits:1})+'% do preço da gasolina, abaixo ou igual ao limite de 70%.'
+  :'O etanol está custando '+pct.toLocaleString('pt-BR',{maximumFractionDigits:1})+'% do preço da gasolina. Para compensar, deveria custar até '+money(limit)+'.';
+ document.querySelector('#ratio').textContent='Limite de 70%: '+money(limit)+' por litro de etanol.';
+ result.classList.add('show');
+});
+[gas,eth].forEach(el=>el.addEventListener('input',()=>result.classList.remove('show')));
+</script>
+</body>
+</html>
